@@ -1,0 +1,138 @@
+Started by user unknown or anonymous
+Obtained Jenkinsfile from git https://github.com/nikhilthk/jenkins-pipeline-demo.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/nodejs-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/nodejs-pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/nikhilthk/jenkins-pipeline-demo.git # timeout=10
+Fetching upstream changes from https://github.com/nikhilthk/jenkins-pipeline-demo.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/nikhilthk/jenkins-pipeline-demo.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 8a304d9aec43d38806ea91c974b2b9c6b699ec7f (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 8a304d9aec43d38806ea91c974b2b9c6b699ec7f # timeout=10
+Commit message: "Create Dockerfile"
+ > git rev-list --no-walk 8a304d9aec43d38806ea91c974b2b9c6b699ec7f # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] echo
+Installing dependencies...
+[Pipeline] sh
++ npm install
+
+up to date, audited 69 packages in 622ms
+
+16 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Test)
+[Pipeline] echo
+Running tests...
+[Pipeline] sh
++ npm test
+
+> nodejs-demo-app@1.0.0 test
+> node test.js
+
+Test passed: /health returned ok
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Docker Build)
+[Pipeline] echo
+Building Docker image...
+[Pipeline] sh
++ docker build --build-arg BUILD_NUMBER=3 -t nodejs-jenkins-demo:3 .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 217B done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:20-alpine
+#2 DONE 1.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 ...
+
+#5 [1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#5 resolve docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 0.1s done
+#5 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 102.53kB 0.3s done
+#4 DONE 0.3s
+
+#6 [4/5] RUN npm install --omit=dev
+#6 CACHED
+
+#7 [2/5] WORKDIR /app
+#7 CACHED
+
+#8 [3/5] COPY package*.json ./
+#8 CACHED
+
+#9 [5/5] COPY . .
+#9 CACHED
+
+#10 exporting to image
+#10 exporting layers done
+#10 exporting manifest sha256:74cd5408caf2c9a4044a0a4dd3d8741d5550c2c8741a8e5eb231ad9716f1e90c 0.0s done
+#10 exporting config sha256:17ae17a08a93161ec0e2e9999215a9b3633eb4e6b2bb10ad2241a4d865de4e00 0.0s done
+#10 exporting attestation manifest sha256:f97c7e7e7f81e0e6e74a49e1650a7f4ace7a9bd5f6ee8fb0fb988794966cee87 0.0s done
+#10 exporting manifest list sha256:3de8e4eeeda448941de5c8029f70b5e42449b5796c3554049fa56021f4f6dba0 0.0s done
+#10 naming to docker.io/library/nodejs-jenkins-demo:3 done
+#10 unpacking to docker.io/library/nodejs-jenkins-demo:3 done
+#10 DONE 0.1s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy)
+[Pipeline] echo
+Deploying container...
+[Pipeline] sh
++ docker rm -f demo-app
+Error response from daemon: No such container: demo-app
+[Pipeline] sh
++ docker run -d --name demo-app -p 3000:3000 nodejs-jenkins-demo:3
+79122678c0cb551a5b1c77bddaf22bb3cb216f08d4604bb78e05a0082b3521b4
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] echo
+Pipeline succeeded!
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
